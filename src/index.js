@@ -5,7 +5,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 
 import CharacterList from './CharacterList';
 
-import endpoing from './endpoint';
+import endpoint from './endpoint';
 
 import './styles.scss';
 
@@ -16,7 +16,9 @@ const Application = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`${endpoing}/characters`)
+    setError(null);
+    setCharacters([])
+    fetch(`${endpoint}/characters`)
       .then((response) => response.json())
       .then(({ characters }) => {
         setLoading(false);
