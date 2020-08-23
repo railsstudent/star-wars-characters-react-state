@@ -1,16 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
 import { BrowserRouter as Router } from 'react-router-dom';
 
 import CharacterList from './CharacterList';
 
-import dummyData from './dummy-data';
+import endpoing from './endpoint';
 
 import './styles.scss';
 
 const Application = () => {
-  const [characters, setCharacters] = useState(dummyData);
+  const [characters, setCharacters] = useState([]);
+
+  useEffect(() => {
+    fetch(`${endpoing}/characters`)
+      .then((response) => response.json())
+      .then(({ characters }) => {
+        console.log(characters);
+        setCharacters(characters);
+      })
+      .catch(console.error);
+  }, []);
 
   return (
     <div className="Application">
