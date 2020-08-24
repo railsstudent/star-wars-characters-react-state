@@ -15,16 +15,30 @@ const useFetch = (url) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(url)
-      .then((response) => response.json())
-      .then((response) => {
-        setLoading(false);
+    const fetchUrl = async () => {
+      try {   
+        const data = await fetch(url);
+        const response = await data.json();
         setResponse(response);
-      })
-      .catch(error => {
+      } catch (error) {
         setError(error);
+      } finally {
         setLoading(false);
-      });
+      }
+    }
+
+    fetchUrl();
+
+    // fetch(url)
+    //   .then((response) => response.json())
+    //   .then((response) => {
+    //     setLoading(false);
+    //     setResponse(response);
+    //   })
+    //   .catch(error => {
+    //     setError(error);
+    //     setLoading(false);
+    //   });
   }, [url]);
 
   return [response, loading, error];
@@ -32,7 +46,7 @@ const useFetch = (url) => {
 
 const Application = () => {
   const [response, loading, error ] = useFetch(`${endpoint}/characters`);
-  const characters = response && response.characters || [];
+  const characters = (response && response.characters) || [];
 
   return (
     <div className="Application">
