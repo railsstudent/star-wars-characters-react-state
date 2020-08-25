@@ -1,12 +1,13 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer } from 'react';
 import ReactDOM from 'react-dom';
 import isFunction from 'lodash/isFunction';
 
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 import CharacterList from './CharacterList';
+import CharacterView from './CharacterView';
 
-import dummyData from './dummy-data';
+import endpoint from './endpoint';
 
 import './styles.scss';
 
@@ -80,9 +81,9 @@ const Application = () => {
   const [state, dispatch] = useThunkReducer(reducer, initialState);
   const { characters } = state;
 
-  useEffect(() => {
-    dispatch(dispatch => {});
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(dispatch => {});
+  // }, [dispatch]);
 
   return (
     <div className="Application">
@@ -95,6 +96,9 @@ const Application = () => {
             Fetch Characters
           </button>
           <CharacterList characters={characters} />
+        </section>
+        <section className="CharacterView">
+          <Route path="/characters/:id" component={CharacterView} />
         </section>
       </main>
     </div>
