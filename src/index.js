@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import ReactDOM from 'react-dom';
 
 import { BrowserRouter as Router } from 'react-router-dom';
+import isFunction from 'lodash/isFunction';
 
 import CharacterList from './CharacterList';
 
@@ -37,6 +38,41 @@ const reducer = (state, action) => {
   return state;
 };
 
+const useThunkReducer = (reducer, initialState) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  const enhancedDispatch = (action) => {
+    console.log(action);
+
+    if (isFunction(action)) {
+      action(dispatch);
+    } else {
+      dispatch(action);
+    }
+  }
+
+  return [state, enhancedDispatch];
+}
+
+const fetchCharacters = (dispatch) => {
+  dispatch({ type: 'FETCHING' })
+  fetch(`${endpoint}/characters`)
+    .then(response => response.json())
+    .then(response => response.characters)
+    .then(characters => 
+      dispatch({
+        type: 'RESPONSE_COMPLETE',
+        payload: { characters }
+      })
+    )
+    .catch(error => 
+      dispatch({
+        type: 'ERROR',
+        payload: { error }
+      })
+    );
+}
+
 const initialState = {
   error: null,
   loading: false,
@@ -44,7 +80,7 @@ const initialState = {
 };
 
 const Application = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useThunkReducer(reducer, initialState);
   const { characters } = state;
 
   return (
@@ -54,7 +90,7 @@ const Application = () => {
       </header>
       <main>
         <section className="sidebar">
-          <button onClick={() => {}}>Fetch Characters</button>
+          <button onClick={() => dispatch(fetchCharacters)}>Fetch Characters</button>
           <CharacterList characters={characters} />
         </section>
       </main>
